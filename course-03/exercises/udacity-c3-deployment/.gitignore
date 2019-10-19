@@ -1,0 +1,3 @@
+k8s/aws-secret.yaml
+k8s/env-configmap.yaml
+k8s/env-secret.yaml
