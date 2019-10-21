@@ -8,7 +8,7 @@ env:
     - KUBECONFIG=course-03/exercises/udacity-c3-deployment/k8s/udacity-udagram-kubeconfig
     - K8S_DIR=course-03/exercises/udacity-c3-deployment/k8s
 
-before_install:
+install:
   - docker -v && docker-compose -v
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
@@ -19,10 +19,10 @@ before_install:
   - sudo mv ./kubectl /usr/local/bin/kubectl
 
 
-install:
+script:
   - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml build --parallel 
 
-after_install:
+deploy:
   - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
   - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml push
   - sed -i -e 's|KUBE_CA_CERT|'"${KUBE_CA_CERT}"'|g' ${KUBECONFIG}
