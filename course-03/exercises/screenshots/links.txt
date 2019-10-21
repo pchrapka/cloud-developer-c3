@@ -1,0 +1,5 @@
+GitHub Repo:
+https://github.com/pchrapka/cloud-developer-c3/tree/06-ci
+
+Docker:
+https://hub.docker.com/u/pchrapka
