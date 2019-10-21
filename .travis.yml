@@ -22,7 +22,7 @@ install:
 script:
   - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml build --parallel 
 
-deploy:
+after_success:
   - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
   - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml push
   - sed -i -e 's|KUBE_CA_CERT|'"${KUBE_CA_CERT}"'|g' ${KUBECONFIG}
