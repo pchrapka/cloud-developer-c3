@@ -16,13 +16,13 @@ before_install:
   - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
   - chmod +x ./kubectl
   - sudo mv ./kubectl /usr/local/bin/kubectl
-  - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
 
 
 install:
   - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml build --parallel 
 
 after_install:
+  - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
   - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml push
   - sed -i -e 's|KUBE_CA_CERT|'"${KUBE_CA_CERT}"'|g' ${KUBECONFIG}
   - sed -i -e 's|KUBE_ENDPOINT|'"${KUBE_ENDPOINT}"'|g' ${KUBECONFIG}
