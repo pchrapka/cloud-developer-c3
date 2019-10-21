@@ -4,6 +4,8 @@ services: docker
 
 env:
   - DOCKER_COMPOSE_VERSION=1.23.2
+  - KUBECONFIG=course-03/exercises/udacity-c3-deployment/k8s/udacity-udagram-kubeconfig
+  - K8S_DIR=course-03/exercises/udacity-c3-deployment/k8s
 
 before_install:
   - docker -v && docker-compose -v
@@ -14,12 +16,27 @@ before_install:
   - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
   - chmod +x ./kubectl
   - sudo mv ./kubectl /usr/local/bin/kubectl
-
-
+  - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
 
 
 install:
   - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml build --parallel 
+
+after_install:
+  - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml push
+  - sed -i -e 's|KUBE_CA_CERT|'"${KUBE_CA_CERT}"'|g' ${KUBECONFIG}
+  - sed -i -e 's|KUBE_ENDPOINT|'"${KUBE_ENDPOINT}"'|g' ${KUBECONFIG}
+  - sed -i -e 's|KUBE_ADMIN_CERT|'"${KUBE_ADMIN_CERT}"'|g' ${KUBECONFIG}
+  - sed -i -e 's|KUBE_ADMIN_KEY|'"${KUBE_ADMIN_KEY}"'|g' ${KUBECONFIG}
+  #- sed -i -e 's|KUBE_USERNAME|'"${KUBE_USERNAME}"'|g' ${KUBECONFIG}
+  - kubectl apply -f ${K8S_DIR}/backend-feed-deployment.yaml
+  - kubectl apply -f ${K8S_DIR}/backend-feed-service.yaml
+  - kubectl apply -f ${K8S_DIR}/backend-user-deployment.yaml
+  - kubectl apply -f ${K8S_DIR}/backend-user-service.yaml
+  - kubectl apply -f ${K8S_DIR}/frontend-deployment.yaml
+  - kubectl apply -f ${K8S_DIR}/frontend-service.yaml
+  - kubectl apply -f ${K8S_DIR}/reverseproxy-deployment.yaml
+  - kubectl apply -f ${K8S_DIR}/reverseproxy-service.yaml
 
 
 
